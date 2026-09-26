@@ -11,7 +11,7 @@ public class mainFrame extends JFrame {
     public mainFrame() {
         super("OP-AMP Application Solver");
 
-        description = new JLabel("Please select a Method to Solve the OP-AMP");
+        description = new JLabel("Please Select the Type of Op-Amp to be Solved");
         description.setFont(new Font("Arial", Font.BOLD, 14));
         description.setHorizontalAlignment(SwingConstants.CENTER);
 

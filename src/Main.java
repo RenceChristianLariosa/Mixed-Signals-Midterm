@@ -21,7 +21,7 @@ public class Main {
        frame.differential.addActionListener(new ActionListener() {
            @Override
            public void actionPerformed(ActionEvent e) {
-
+                new DifferentialSolverFrame();
            }
        });
        frame.integrator.addActionListener(new ActionListener() {

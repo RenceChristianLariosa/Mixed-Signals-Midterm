@@ -36,11 +36,13 @@ public class Main {
                 new CurrentToVoltageSolverFrame();
             }
         });
-       frame.voltage_to_current.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
 
-           }
-       });
+        frame.voltage_to_current.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new VoltageToCurrentSolverFrame();
+            }
+        });
+
     }
 }

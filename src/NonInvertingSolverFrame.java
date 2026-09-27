@@ -24,7 +24,6 @@ public class NonInvertingSolverFrame extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
 
-        // --- 1. Input Panel ---
         JPanel inputPanel = new JPanel(new GridBagLayout());
         inputPanel.setBorder(BorderFactory.createTitledBorder("Inputs"));
         GridBagConstraints gbcInput = new GridBagConstraints();
@@ -66,7 +65,6 @@ public class NonInvertingSolverFrame extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         add(inputPanel, gbc);
 
-        // --- 2. Diagram Panel ---
         diagramPanel = new CircuitDiagramPanel();
         diagramPanel.setBorder(BorderFactory.createTitledBorder("Circuit Diagram"));
         diagramPanel.setBackground(Color.WHITE);
@@ -75,14 +73,12 @@ public class NonInvertingSolverFrame extends JFrame {
         gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 0.65;
         add(diagramPanel, gbc);
 
-        // --- 3. Calculate Button ---
         JButton calcButton = new JButton("Calculate Output Voltage");
         calcButton.setFont(new Font("Arial", Font.BOLD, 14));
         gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2; gbc.weighty = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(calcButton, gbc);
 
-        // --- 4. Result Area ---
         resultArea = new JTextArea(4, 20);
         resultArea.setEditable(false);
         resultArea.setFont(new Font("Monospaced", Font.BOLD, 12));
@@ -125,9 +121,6 @@ public class NonInvertingSolverFrame extends JFrame {
         }
     }
 
-    // ==========================================
-    // INNER CLASS: CIRCUIT DIAGRAM DRAWER
-    // ==========================================
     public class CircuitDiagramPanel extends JPanel {
 
         @Override
@@ -142,7 +135,6 @@ public class NonInvertingSolverFrame extends JFrame {
             int w = getWidth();
             int h = getHeight();
 
-            // Op-Amp Geometry
             int opAmpX = w - 180;
             int opAmpY = h / 2;
             int opAmpSize = 80;
@@ -151,46 +143,35 @@ public class NonInvertingSolverFrame extends JFrame {
             int outputY = opAmpY;
             int outputX = opAmpX + opAmpSize;
 
-            // Draw Op-Amp Symbol
             drawOpAmp(g2, opAmpX, opAmpY, opAmpSize);
 
-            // --- Draw Feedback Resistor (Rf) ---
             int rfWireY = invertingInputY - 60;
             String rfVal = rfField.getText();
 
-            // Draw the complete feedback wire first
             g2.drawLine(opAmpX - 20, invertingInputY, opAmpX - 20, rfWireY);
             g2.drawLine(opAmpX - 20, rfWireY, outputX + 20, rfWireY);
             g2.drawLine(outputX + 20, rfWireY, outputX + 20, outputY);
             g2.fillOval(outputX + 17, outputY - 3, 6, 6);
 
-            // Draw Rf on top of the wire
             drawResistor(g2, opAmpX - 20, rfWireY, outputX + 20, rfWireY, "Rf = " + rfVal + " \u03A9");
 
-            // Draw output wire
             g2.drawLine(outputX, outputY, outputX + 60, outputY);
             g2.drawString("Vo", outputX + 65, outputY + 5);
 
-            // --- Draw Input Section (R1 and Vin) ---
             String r1Val = r1Field.getText();
             String vinVal = vinField.getText();
 
-            // 1. Draw Vin source to non-inverting (+) input
             int vinStartX = 40;
             drawOpenTerminalSource(g2, vinStartX, nonInvertingInputY, vinVal + " V");
             g2.drawLine(vinStartX + 15, nonInvertingInputY, opAmpX, nonInvertingInputY);
 
-            // 2. Draw R1 from inverting (-) input to ground
             int turnPointX = opAmpX - 120;
             int r1GroundY = invertingInputY + 100;
 
-            // Draw the complete R1 wire first (from op-amp node to turn point, then down to ground)
             g2.drawLine(opAmpX - 20, invertingInputY, turnPointX, invertingInputY);
             g2.drawLine(turnPointX, invertingInputY, turnPointX, r1GroundY);
             drawGround(g2, turnPointX, r1GroundY);
 
-            // Draw R1 on top of the horizontal wire section
-            // We place it between the op-amp node and the turn point
             drawResistor(g2, opAmpX - 20, invertingInputY, turnPointX, invertingInputY, "R1 = " + r1Val + " \u03A9");
         }
 
@@ -204,7 +185,6 @@ public class NonInvertingSolverFrame extends JFrame {
             g2.drawString("+", x + 10, y + 25);
         }
 
-        // Bulletproof resistor drawing: Erases the background line, then draws the zigzag
         public void drawResistor(Graphics2D g2, int x1, int y1, int x2, int y2, String label) {
             int midX = (x1 + x2) / 2;
             int midY = (y1 + y2) / 2;
@@ -213,12 +193,9 @@ public class NonInvertingSolverFrame extends JFrame {
             int zigzagHeight = 10;
             int startZig = midX - zigzagWidth / 2;
 
-            // 1. Erase the straight line under the zigzag by drawing a white rectangle
-            // We add a little padding (2px) to ensure it fully covers the line
             g2.setColor(getBackground());
             g2.fillRect(startZig - 2, midY - zigzagHeight - 2, zigzagWidth + 4, (zigzagHeight * 2) + 4);
 
-            // 2. Draw the zigzag in black
             g2.setColor(Color.BLACK);
             int[] xPoints = new int[7];
             int[] yPoints = new int[7];
@@ -239,7 +216,6 @@ public class NonInvertingSolverFrame extends JFrame {
 
             g2.drawPolyline(xPoints, yPoints, 7);
 
-            // 3. Draw Label
             g2.setFont(new Font("Arial", Font.PLAIN, 11));
             g2.drawString(label, midX - 30, midY - 15);
             g2.setFont(new Font("Arial", Font.BOLD, 12));

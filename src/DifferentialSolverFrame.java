@@ -22,7 +22,6 @@ public class DifferentialSolverFrame extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
 
-        // --- 1. Input Panel ---
         JPanel inputPanel = new JPanel(new GridBagLayout());
         inputPanel.setBorder(BorderFactory.createTitledBorder("Inputs"));
         GridBagConstraints gbcInput = new GridBagConstraints();
@@ -43,7 +42,6 @@ public class DifferentialSolverFrame extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         add(inputPanel, gbc);
 
-        // --- 2. Diagram Panel ---
         diagramPanel = new CircuitDiagramPanel();
         diagramPanel.setBorder(BorderFactory.createTitledBorder("Circuit Diagram"));
         diagramPanel.setBackground(Color.WHITE);
@@ -52,14 +50,12 @@ public class DifferentialSolverFrame extends JFrame {
         gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 0.70;
         add(diagramPanel, gbc);
 
-        // --- 3. Calculate Button ---
         JButton calcButton = new JButton("Calculate Output Voltage");
         calcButton.setFont(new Font("Arial", Font.BOLD, 14));
         gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2; gbc.weighty = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(calcButton, gbc);
 
-        // --- 4. Result Area ---
         resultArea = new JTextArea(5, 20);
         resultArea.setEditable(false);
         resultArea.setFont(new Font("Monospaced", Font.BOLD, 12));
@@ -134,9 +130,6 @@ public class DifferentialSolverFrame extends JFrame {
         }
     }
 
-    // ==========================================
-    // INNER CLASS: CIRCUIT DIAGRAM DRAWER
-    // ==========================================
     public class CircuitDiagramPanel extends JPanel {
 
         @Override
@@ -151,7 +144,6 @@ public class DifferentialSolverFrame extends JFrame {
             int w = getWidth();
             int h = getHeight();
 
-            // --- Op-Amp Geometry ---
             int opAmpX = w - 200;
             int opAmpY = h / 2 - 30;
             int opAmpSize = 80;
@@ -162,7 +154,6 @@ public class DifferentialSolverFrame extends JFrame {
 
             drawOpAmp(g2, opAmpX, opAmpY, opAmpSize);
 
-            // --- 1. Draw Feedback Resistor (Rf) ---
             int rfWireY = invertingInputY - 70;
             String rfVal = rfField.getText();
 
@@ -171,7 +162,6 @@ public class DifferentialSolverFrame extends JFrame {
             g2.drawLine(outputX + 20, rfWireY, outputX + 20, outputY);
             g2.fillOval(outputX + 17, outputY - 3, 6, 6);
 
-            // --- 2. Draw Output and Load Resistor (RL) ---
             String rlVal = rlField.getText();
             int rlWireX = outputX + 70;
             int rlGroundY = outputY + 130;
@@ -185,7 +175,6 @@ public class DifferentialSolverFrame extends JFrame {
             g2.setFont(new Font("Arial", Font.BOLD, 12));
             g2.drawString("v_out", rlWireX + 10, outputY - 5);
 
-            // --- 3. Draw Input 1 (v1, R1) ---
             String r1Val = r1Field.getText();
             String v1Val = v1Field.getText();
             int v1StartX = 60;
@@ -198,7 +187,6 @@ public class DifferentialSolverFrame extends JFrame {
 
             drawResistor(g2, opAmpX - 140, invertingInputY, opAmpX - 20, invertingInputY, "R1 = " + r1Val + " \u03A9");
 
-            // --- 4. Draw Input 2 (v2, R2) ---
             String r2Val = r2Field.getText();
             String v2Val = v2Field.getText();
             int v2StartX = 60;
@@ -211,7 +199,6 @@ public class DifferentialSolverFrame extends JFrame {
 
             drawResistor(g2, opAmpX - 140, nonInvertingInputY, opAmpX - 20, nonInvertingInputY, "R2 = " + r2Val + " \u03A9");
 
-            // --- 5. Draw R3 from v_b to ground ---
             String r3Val = r3Field.getText();
             int r3X = opAmpX - 50;
             int r3GroundY = nonInvertingInputY + 100;
@@ -223,15 +210,11 @@ public class DifferentialSolverFrame extends JFrame {
 
             g2.drawLine(opAmpX - 20, nonInvertingInputY, opAmpX, nonInvertingInputY);
 
-            // Connection dots
             g2.fillOval(r3X - 3, nonInvertingInputY - 3, 6, 6);
             g2.fillOval(opAmpX - 23, invertingInputY - 3, 6, 6);
 
-            // --- Node Labels (Adjusted to avoid overlap) ---
             g2.setFont(new Font("Arial", Font.PLAIN, 12));
-            // Move v_a to the right, close to the op-amp, and above the wire
             g2.drawString("v_a", opAmpX - 35, invertingInputY - 15);
-            // Move v_b to the right, close to the op-amp, and above the wire
             g2.drawString("v_b", opAmpX - 35, nonInvertingInputY - 15);
         }
 
@@ -277,7 +260,6 @@ public class DifferentialSolverFrame extends JFrame {
             g2.drawPolyline(xPoints, yPoints, 7);
             g2.drawLine(endZig, midY, x2, y2);
 
-            // Adjusted label position: 20 pixels above the wire to clear the zigzag peaks
             g2.setFont(new Font("Arial", Font.PLAIN, 11));
             g2.drawString(label, midX - 30, midY - 20);
             g2.setFont(new Font("Arial", Font.BOLD, 12));

@@ -24,18 +24,18 @@ public class Main {
                 new DifferentialSolverFrame();
            }
        });
-       frame.integrator.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-
-           }
-       });
-       frame.current_to_voltage.addActionListener(new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-
-           }
-       });
+        frame.integrator.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new IntegratorSolverFrame();
+            }
+        });
+        frame.current_to_voltage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new CurrentToVoltageSolverFrame();
+            }
+        });
        frame.voltage_to_current.addActionListener(new ActionListener() {
            @Override
            public void actionPerformed(ActionEvent e) {

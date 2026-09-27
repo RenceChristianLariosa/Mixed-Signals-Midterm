@@ -27,7 +27,7 @@ public class Main {
         frame.integrator.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new IntegratorSolverFrame(); // Add this line
+                new IntegratorSolverFrame();
             }
         });
        frame.current_to_voltage.addActionListener(new ActionListener() {

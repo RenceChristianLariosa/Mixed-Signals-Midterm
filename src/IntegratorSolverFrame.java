@@ -22,7 +22,6 @@ public class IntegratorSolverFrame extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
 
-        // --- 1. Input Panel ---
         JPanel inputPanel = new JPanel(new GridBagLayout());
         inputPanel.setBorder(BorderFactory.createTitledBorder("Inputs"));
         GridBagConstraints gbcInput = new GridBagConstraints();
@@ -74,7 +73,6 @@ public class IntegratorSolverFrame extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         add(inputPanel, gbc);
 
-        // --- 2. Diagram Panel ---
         diagramPanel = new CircuitDiagramPanel();
         diagramPanel.setBorder(BorderFactory.createTitledBorder("Circuit Diagram"));
         diagramPanel.setBackground(Color.WHITE);
@@ -83,14 +81,12 @@ public class IntegratorSolverFrame extends JFrame {
         gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 0.70;
         add(diagramPanel, gbc);
 
-        // --- 3. Calculate Button ---
         JButton calcButton = new JButton("Calculate Output Voltage");
         calcButton.setFont(new Font("Arial", Font.BOLD, 14));
         gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2; gbc.weighty = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(calcButton, gbc);
 
-        // --- 4. Result Area ---
         resultArea = new JTextArea(4, 20);
         resultArea.setEditable(false);
         resultArea.setFont(new Font("Monospaced", Font.BOLD, 12));
@@ -118,7 +114,6 @@ public class IntegratorSolverFrame extends JFrame {
             if (r1 == 0) throw new ArithmeticException("R1 cannot be zero.");
             if (cf == 0) throw new ArithmeticException("Cf cannot be zero.");
 
-            // Assuming t = 1 second for demonstration of the integral
             double t = 1.0;
             double integralPart = vin * t;
             double outputVoltage = -(1.0 / (r1 * cf)) * integralPart + vout0;
@@ -142,9 +137,6 @@ public class IntegratorSolverFrame extends JFrame {
         }
     }
 
-    // ==========================================
-    // INNER CLASS: CIRCUIT DIAGRAM DRAWER
-    // ==========================================
     public class CircuitDiagramPanel extends JPanel {
 
         @Override
@@ -156,46 +148,38 @@ public class IntegratorSolverFrame extends JFrame {
             g2.setStroke(new BasicStroke(2));
             g2.setFont(new Font("Arial", Font.BOLD, 12));
 
-            // --- Fixed Layout Coordinates (Matches Reference Image) ---
             int opAmpX = 450;
             int opAmpY = 220;
             int opAmpSize = 80;
 
-            int invInputY = opAmpY - 20;      // Inverting input pin
-            int nonInvInputY = opAmpY + 20;   // Non-inverting input pin
-            int outputY = opAmpY;             // Output pin
-            int outputX = opAmpX + opAmpSize; // Right tip of op-amp
+            int invInputY = opAmpY - 20;
+            int nonInvInputY = opAmpY + 20;
+            int outputY = opAmpY;
+            int outputX = opAmpX + opAmpSize;
 
-            // --- 1. Draw Op-Amp Symbol ---
             drawOpAmp(g2, opAmpX, opAmpY, opAmpSize);
 
-            // --- 2. Draw Feedback Capacitor (Cf) ---
             String cfVal = cfField.getText();
             int cfTopWireY = invInputY - 60;
             int cfCenterX = (opAmpX + outputX) / 2;
             int capGap = 8;
 
-            // Feedback wire route
             g2.drawLine(opAmpX - 20, invInputY, opAmpX - 20, cfTopWireY);       // Up from inverting input
             g2.drawLine(opAmpX - 20, cfTopWireY, cfCenterX - capGap, cfTopWireY); // Left side of Cf
             g2.drawLine(cfCenterX + capGap, cfTopWireY, outputX + 20, cfTopWireY); // Right side of Cf
             g2.drawLine(outputX + 20, cfTopWireY, outputX + 20, outputY);       // Down to output
 
-            // Capacitor Symbol
             g2.drawLine(cfCenterX - capGap, cfTopWireY - 15, cfCenterX - capGap, cfTopWireY + 15);
             g2.drawLine(cfCenterX + capGap, cfTopWireY - 15, cfCenterX + capGap, cfTopWireY + 15);
 
-            // Labels for Cf
             g2.setFont(new Font("Arial", Font.BOLD, 12));
             g2.drawString("Cf = " + cfVal + " F", cfCenterX - 45, cfTopWireY - 25);
             g2.drawString("i_F", cfCenterX + 15, cfTopWireY - 10);
             g2.fillOval(outputX + 17, outputY - 3, 6, 6); // Dot at output junction
 
-            // --- 3. Draw Output and Load Resistor (RL) ---
             g2.drawLine(outputX, outputY, outputX + 70, outputY);
             g2.drawString("Vo", outputX + 75, outputY + 5);
 
-            // RL to ground
             int rlWireX = outputX + 40;
             int rlTopY = outputY + 30;
             int rlBottomY = outputY + 80;
@@ -207,31 +191,24 @@ public class IntegratorSolverFrame extends JFrame {
             drawGround(g2, rlWireX, rlGroundY);
             g2.fillOval(rlWireX - 3, outputY - 3, 6, 6);
 
-            // --- 4. Draw Input Section (Vin, R1) ---
             String r1Val = r1Field.getText();
             String vinVal = vinField.getText();
 
-            // Vin Source
             int vinX = 80;
             drawSource(g2, vinX, invInputY, vinVal + " V");
             g2.drawString("i_1", vinX + 25, invInputY - 10);
 
-            // Wire from source to R1
             g2.drawLine(vinX + 20, invInputY, 220, invInputY);
 
-            // R1 Resistor
             drawResistorHorizontal(g2, 220, invInputY, 300, invInputY, "R1 = " + r1Val + " \u03A9");
 
-            // Wire from R1 to op-amp
             g2.drawLine(300, invInputY, opAmpX - 20, invInputY);
             g2.fillOval(opAmpX - 23, invInputY - 3, 6, 6); // Dot at inverting input junction
 
-            // --- 5. Draw Non-Inverting Input to Ground ---
             g2.drawLine(opAmpX - 20, nonInvInputY, 350, nonInvInputY);
             g2.drawLine(350, nonInvInputY, 350, nonInvInputY + 60);
             drawGround(g2, 350, nonInvInputY + 60);
 
-            // Labels for IB
             g2.drawString("IB", opAmpX - 50, nonInvInputY - 10);
             g2.drawString("IB", opAmpX - 50, invInputY + 20);
         }
@@ -242,11 +219,9 @@ public class IntegratorSolverFrame extends JFrame {
             g2.setColor(Color.BLACK);
             g2.drawPolygon(xPoints, yPoints, 3);
 
-            // Input pins
             g2.drawLine(x - 20, y - 20, x, y - 20);
             g2.drawLine(x - 20, y + 20, x, y + 20);
 
-            // Labels inside triangle
             g2.setFont(new Font("Arial", Font.BOLD, 16));
             g2.drawString("-", x + 10, y - 15);
             g2.drawString("+", x + 10, y + 25);
@@ -259,14 +234,10 @@ public class IntegratorSolverFrame extends JFrame {
             int boxWidth = 40;
             int boxHeight = 20;
 
-            // Wire to box
             g2.drawLine(x1, y1, midX - boxWidth/2, midY);
-            // Box
             g2.drawRect(midX - boxWidth/2, midY - boxHeight/2, boxWidth, boxHeight);
-            // Wire from box
             g2.drawLine(midX + boxWidth/2, midY, x2, y2);
 
-            // Label
             g2.setFont(new Font("Arial", Font.BOLD, 12));
             g2.drawString(label, midX - 40, midY - 20);
         }
@@ -277,30 +248,23 @@ public class IntegratorSolverFrame extends JFrame {
             int boxWidth = 20;
             int boxHeight = 40;
 
-            // Wire to box
             g2.drawLine(midX, y1, midX, midY - boxHeight/2);
-            // Box
             g2.drawRect(midX - boxWidth/2, midY - boxHeight/2, boxWidth, boxHeight);
-            // Wire from box
             g2.drawLine(midX, midY + boxHeight/2, midX, y2);
 
-            // Label
             g2.setFont(new Font("Arial", Font.BOLD, 12));
             g2.drawString(label, midX + 20, midY + 5);
         }
 
         public void drawSource(Graphics2D g2, int x, int y, String label) {
             g2.setColor(Color.BLACK);
-            // Circle
             g2.drawOval(x, y - 15, 30, 30);
 
-            // Sine wave inside
             int cx = x + 15;
             int cy = y;
             g2.drawArc(cx - 8, cy - 8, 16, 16, 0, 180);
             g2.drawArc(cx - 8, cy, 16, 16, 180, 180);
-
-            // Label
+            
             g2.setFont(new Font("Arial", Font.BOLD, 12));
             int labelWidth = g2.getFontMetrics().stringWidth(label);
             g2.drawString(label, x - labelWidth - 5, y + 5);
